@@ -1,0 +1,9 @@
+services:
+  app:
+    image: abia-agent-portal
+    build:
+      context: ./
+      target: production
+      dockerfile: Dockerfile
+    ports:
+      - "127.0.0.1:3000:3000"

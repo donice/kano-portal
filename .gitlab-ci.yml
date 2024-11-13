@@ -1,0 +1,88 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  CI_REGISTRY: docker.io #registry.gitlab.com
+  CI_REGISTRY_IMAGE: xtradot/abiapay-agent-portal
+  CONTAINER_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+
+services:
+  - docker:24.0.6-dind
+
+# Publish to DockerHub Registry
+# Dockerize
+docker_build:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:24.0.6-dind
+  only:
+    - main
+  before_script:
+    - echo "Building Docker image..."
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker build . -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA -t $CI_REGISTRY_IMAGE:latest --target production
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+    - docker push $CI_REGISTRY_IMAGE:latest
+    - |
+      if [ -n "$CI_COMMIT_TAG" ]; then
+        echo "Tagging Docker image with Git tag..."
+        docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
+        docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
+      fi
+  after_script:
+    - docker logout
+
+deploy_sandbox:
+  image: ubuntu
+  stage: deploy
+  only:
+    - dev
+  before_script:
+    - "command -v ssh-agent >/dev/null || ( apt update && apt install -y openssh-client )"
+    - install -m 600 -D /dev/null ~/.ssh/known_hosts
+    - echo -n $KNOWN_HOSTS | base64 -d > ~/.ssh/known_hosts
+  script:
+    - |
+      eval $(ssh-agent -s) && \
+      ssh-add <(echo "$SSH_KEY" | base64 -d) && \
+      ssh $SSH_USER@$SSH_HOST " \
+      cd $WORK_DIR && \
+      git reset --hard && \
+      git fetch && \
+      git checkout $CI_COMMIT_REF_NAME && \
+      git pull && \
+      export PATH=$PATH:$NVM_PATH && \
+      yarn install && \
+      yarn build && \
+      pm2 reload abiapay-agent-portal && \
+      exit" && \
+      eval $(ssh-add -D)
+
+  after_script:
+    # - eval $(ssh-add -D)
+    - rm -rf ~/.ssh
+  environment:
+    name: sandbox
+    url: https://sandboxweb.abiapay.ng
+
+
+# Deploy to production
+deploy_prod:
+  stage: deploy
+  only:
+    - main
+  image: jomoflash/kubectl:v1
+  before_script:
+    - install -m 600 -D /dev/null ~/.kube/config
+    - echo -n $CI_KUBECONFIG | base64 -d > ~/.kube/config
+  script:
+    - envsubst < manifest.tmpl > manifest.yaml
+    - kubectl apply -f manifest.yaml
+  after_script:
+    - rm -rf ~/.kube
+  environment:
+    name: production
+    url: https://abiapay.ng

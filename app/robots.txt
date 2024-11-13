@@ -1,0 +1,19 @@
+# Disallow all web crawlers from accessing certain directories
+User-agent: *
+Disallow: /dashboard/
+Disallow: /signin/
+Disallow: /signin/agent/
+Disallow: /signin/mda/
+Disallow: /signup/
+Disallow: /private/
+
+# Allow Googlebot to access everything
+User-agent: Googlebot
+Disallow:
+
+# Block a specific web crawler
+User-agent: BadBot
+Disallow: /
+
+# Sitemap location
+Sitemap: https://www.example.com/sitemap.xml

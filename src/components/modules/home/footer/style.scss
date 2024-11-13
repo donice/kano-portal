@@ -1,0 +1,63 @@
+@use "../../../../styles/index.scss" as *;
+
+.footer-container {
+  padding: 1rem 0;
+  overflow-x: auto;
+
+  h2 {
+    text-align: center;
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+}
+
+.footer-scroll {
+  display: flex;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  overflow-x: auto;
+  scrollbar-width: none !important;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+}
+
+.footer-card {
+  max-width: 20rem;
+  padding: 1rem;
+  background-color: #f1f5f9;
+  border-radius: 1rem;
+  scroll-snap-align: start;
+  flex: 0 0 auto;
+  transition: transform 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.footer-card h3 {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: #333;
+  font-weight: 600;
+}
+
+.footer-card p {
+  font-size: 0.875rem;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.footer-card a {
+  font-size: 0.875rem;
+  color: #0d9488;
+  text-decoration: none;
+  font-weight: 600;
+  border: 1px solid teal;
+  padding: 0.25rem 1rem;
+  border-radius: 1rem;
+}
+
+.footer-card:hover {
+  transform: translateY(2.5px);
+}

@@ -1,0 +1,121 @@
+@use "../../../styles/index.scss" as *;
+
+// Apply smooth scroll behavior to the entire page
+html {
+  scroll-behavior: smooth;
+}
+
+.home {
+  nav {
+    display: flex;
+    gap: 2rem;
+    border-bottom: 1px solid #e3e3e3;
+
+    .home__category {
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      font-size: 0.85rem;
+      align-items: center;
+      gap: 0.25rem;
+      padding-bottom: 1rem;
+      transition: all 0.3s ease-in-out;
+
+      h2 {
+        font-size: 0.75rem;
+        color: #555;
+      }
+
+      span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f1f5f9;
+        color: #0d9488;
+        padding: 0.75rem;
+        height: 60px;
+        width: 60px;
+        border-radius: 50%;
+        transition: background-color 0.3s ease, color 0.3s ease;
+
+        .icon {
+          font-size: 1.75rem;
+        }
+      }
+
+      &-selected {
+        border-bottom: 0.25rem solid #0d9488;
+
+        h2 {
+          font-weight: 600;
+        }
+
+        span {
+          background-color: #0d9488;
+          color: white;
+
+          .icon {
+            color: white;
+          }
+        }
+      }
+
+      &:hover {
+        h2 {
+          color: #0d9488;
+        }
+      }
+    }
+  }
+
+  &__items {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+
+    &-container {
+      padding: 1rem;
+      background-color: #f1f5f9;
+      height: 20vh;
+      margin: 0 -0.8rem;
+    }
+  }
+
+  &__item {
+    margin-bottom: 0.5rem;
+    background-color: white;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    height: 7rem;
+    transition: transform 0.2s ease-in-out;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    a {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      text-align: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      color: #555;
+      font-weight: 600;
+      font-size: 0.75rem;
+      transition: color 0.3s ease;
+
+      &:hover {
+        color: #0d9488;
+      }
+    }
+  }
+}
+
+.icon {
+  font-size: 2.5rem;
+}
